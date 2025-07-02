@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventProcessorWorker", "EventProcessorWorker\EventProcessorWorker.csproj", "{97F8234B-67E4-47D4-B08A-1B4EBE5C253B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventProcessorWorker.Tests", "EventProcessorWorker.Tests\EventProcessorWorker.Tests.csproj", "{FEC4D2F8-423A-4ED5-B091-42B9AAC2D936}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{97F8234B-67E4-47D4-B08A-1B4EBE5C253B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97F8234B-67E4-47D4-B08A-1B4EBE5C253B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97F8234B-67E4-47D4-B08A-1B4EBE5C253B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97F8234B-67E4-47D4-B08A-1B4EBE5C253B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEC4D2F8-423A-4ED5-B091-42B9AAC2D936}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEC4D2F8-423A-4ED5-B091-42B9AAC2D936}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEC4D2F8-423A-4ED5-B091-42B9AAC2D936}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEC4D2F8-423A-4ED5-B091-42B9AAC2D936}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
