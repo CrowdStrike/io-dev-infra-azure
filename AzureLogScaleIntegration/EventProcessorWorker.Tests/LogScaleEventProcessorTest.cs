@@ -59,7 +59,7 @@ public class LogScaleEventProcessorTest
                 It.IsAny<Stream>(),
                 null,
                 It.Is<IDictionary<string, string>>(dictionary =>
-                    dictionary["offset"] == events.Last().Offset.ToString(CultureInfo.InvariantCulture)),
+                    dictionary["offset"] == events.Last().OffsetString),
                 null,
                 null,
                 null,

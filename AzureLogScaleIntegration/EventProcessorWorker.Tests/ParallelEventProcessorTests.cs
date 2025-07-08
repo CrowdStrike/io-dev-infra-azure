@@ -57,7 +57,7 @@ public class ParallelEventProcessorTests
         {
             {
                 TestableParallelEventProcessor.OffsetMetadataKey,
-                eventData.Offset.ToString(CultureInfo.InvariantCulture)
+                eventData.OffsetString
             }
         };
 
@@ -273,21 +273,17 @@ public class ParallelEventProcessorTests
         // Assert
         result.Should().HaveCount(2);
         result.Should().ContainSingle(o =>
-            o.PartitionId == "partition1" && o.StartingPosition == EventPosition.FromOffset(100, false));
+            o.PartitionId == "partition1" && o.StartingPosition == EventPosition.FromOffset("100", false));
         result.Should().ContainSingle(o =>
-            o.PartitionId == "partition2" && o.StartingPosition == EventPosition.FromOffset(200, false));
+            o.PartitionId == "partition2" && o.StartingPosition == EventPosition.FromOffset("200", false));
     }
 
     [Fact]
-    public async Task ListCheckpointsAsync_ShouldSkipInvalidOrMissingOffsetMetadata()
+    public async Task ListCheckpointsAsync_ShouldSkipMissingOffsetMetadata()
     {
         // Arrange
         var blobItems = new[]
         {
-            BlobsModelFactory.BlobItem(
-                name: $"{_expectedCheckpointBlobPath}partition1",
-                metadata: new Dictionary<string, string> { { "offset", "invalid_offset" } },
-                properties: BlobsModelFactory.BlobItemProperties(true)),
             BlobsModelFactory.BlobItem(
                 name: $"{_expectedCheckpointBlobPath}partition2",
                 metadata: new Dictionary<string, string> { }, // Missing offset
@@ -310,7 +306,7 @@ public class ParallelEventProcessorTests
 
     [Theory, AutoMoqData]
     public async Task GetCheckpointAsync_ShouldReturnCheckpoint_WhenBlobExists(Response response, string partitionId,
-        long expectedOffset)
+        string expectedOffset)
     {
         // Arrange
         var fromValue = Response.FromValue(BlobsModelFactory.BlobProperties(metadata: new Dictionary<string, string>
@@ -346,31 +342,6 @@ public class ParallelEventProcessorTests
             .Setup(blob => blob.GetPropertiesAsync(It.IsAny<BlobRequestConditions>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new RequestFailedException(404, BlobErrorCode.BlobNotFound.ToString(),
                 BlobErrorCode.BlobNotFound.ToString(), null));
-
-        _mockStorageContainer
-            .Setup(container => container.GetBlobClient(_expectedCheckpointBlobPath + partitionId))
-            .Returns(_mockBlobClient.Object);
-
-        // Act
-        var checkpoint = await _processor.PublicGetCheckpointAsync(partitionId, CancellationToken.None);
-
-        // Assert
-        checkpoint.Should().BeNull();
-    }
-
-    [Theory, AutoMoqData]
-    public async Task GetCheckpointAsync_ShouldReturnNull_WhenOffsetMetadataIsInvalid(Response response,
-        string partitionId, long expectedOffset)
-    {
-        // Arrange
-        var fromValue = Response.FromValue(BlobsModelFactory.BlobProperties(metadata: new Dictionary<string, string>
-        {
-            { "offset", "invalid_offset" }
-        }), response);
-
-        _mockBlobClient
-            .Setup(blob => blob.GetPropertiesAsync(It.IsAny<BlobRequestConditions>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(fromValue);
 
         _mockStorageContainer
             .Setup(container => container.GetBlobClient(_expectedCheckpointBlobPath + partitionId))

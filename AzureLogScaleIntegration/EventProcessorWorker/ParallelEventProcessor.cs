@@ -1,4 +1,3 @@
-using System.Globalization;
 using Azure;
 using Azure.Core;
 using Azure.Messaging.EventHubs;
@@ -158,12 +157,7 @@ public abstract class ParallelEventProcessor<TPartition> : EventProcessor<TParti
         await foreach (var item in StorageContainer.GetBlobsAsync(traits: BlobTraits.Metadata,
                            prefix: checkpointBlobsPrefix, cancellationToken: cancellationToken).ConfigureAwait(false))
         {
-            if (item.Metadata.TryGetValue(OffsetMetadataKey,
-                    out var readOnlySpan) &&
-                long.TryParse(readOnlySpan,
-                    NumberStyles.Integer,
-                    CultureInfo.InvariantCulture,
-                    out var offset))
+            if (item.Metadata.TryGetValue(OffsetMetadataKey, out var offset))
             {
                 checkpoints.Add(new EventProcessorCheckpoint
                 {
@@ -194,8 +188,7 @@ public abstract class ParallelEventProcessor<TPartition> : EventProcessor<TParti
                 .GetPropertiesAsync(cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
 
-            if (long.TryParse(properties.Metadata[OffsetMetadataKey], NumberStyles.Integer,
-                    CultureInfo.InvariantCulture, out var offset))
+            if (properties.Metadata.TryGetValue(OffsetMetadataKey, out var offset))
             {
                 return new EventProcessorCheckpoint
                 {
@@ -224,7 +217,7 @@ public abstract class ParallelEventProcessor<TPartition> : EventProcessor<TParti
             ConsumerGroup.ToLowerInvariant());
         var checkpointMetadata = new Dictionary<string, string>
         {
-            { OffsetMetadataKey, data.Offset.ToString(CultureInfo.InvariantCulture) }
+            { OffsetMetadataKey, data.OffsetString }
         };
 
         using var emptyStream = new MemoryStream([]);
